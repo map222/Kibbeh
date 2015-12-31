@@ -1,5 +1,6 @@
 *api_key.txt
 *checkpoint.ipynb
+*.json
 /src/__pycache__
 
 # Windows image file caches
