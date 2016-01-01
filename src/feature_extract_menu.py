@@ -26,9 +26,12 @@ def wordify_json_menu(json_menu, stop_words):
     
     json_menu: a dictionary / json from foursquare of a restaurant menu
     '''
-    dumb_keys = {'name', 'count', 'items', 'Main', 'Menu',
-                 'description', 'entries', 'price', 'prices'}
-    cur_menu = json_menu['menus']
+    dumb_keys = {'name', 'count', 'items', 'Main', 'Menu', # yelp
+                 'description', 'entries', 'price', 'prices',
+                 'section_name', 'subsections', 'currency_symbol',
+                 'menu_name', 'type', 'item' # locu
+                 }
+    cur_menu = json_menu
     string_menu = json.dumps(cur_menu)
     letters_only_menu =re.sub("[^a-zA-Z]", " ", string_menu )
     letters_only_menu = letters_only_menu.lower()
