@@ -7,6 +7,8 @@ Created on Wed Dec 23 16:01:14 2015
 
 import time
 import numpy as np
+import re
+import pdb
 
 def remove_duplicate_fs_restos(fs_resto_list):
     fs_id_set = {x['venue']['id'] for x in fs_resto_list}
@@ -93,9 +95,11 @@ def get_fs_restos_by_ll(grid_values, foursquare_client, grid_step = 0.01, grid_r
             restaurant_data.extend(cur_query['venues'])
             time.sleep(0.5)
     return restaurant_data
-
     
 def get_yelp_restaurants(yelp_api):
+    ''' 
+    Get a list of restaurants from yelp
+    '''
     restaurant_data = []
     for cur_offset in range(0, 1000, 20):
         # sort = 0 sets by default, limited to 1000, sort = 2 is ranked from best to worst, but limited to 40
@@ -103,3 +107,44 @@ def get_yelp_restaurants(yelp_api):
         #pdb.set_trace()
         restaurant_data.extend( cur_query['businesses'])
     return restaurant_data
+
+def get_locu_menus_yelp_id(yelp_df, locu_restos, locu_venue_client):
+    ''' 
+    
+    Parameters:
+    yelp_df: a dataframe with the 'name' as the index
+    locu_restos: a json list of locu restaurant metadata
+    venue_client: locu_api VenueApiClient
+    '''
+    
+    new_locu_list = []
+    menu_list = []
+    
+    # use phone number as unique index
+    locu_phones = [x['phone'] for x in locu_restos ]
+    locu_phones = list(map( lambda x: re.sub('[()\- ]', '',str(x)),  locu_phones) ) # get rid of punctuation
+    
+    # find menus for everything in yelp df
+    for cur_resto in yelp_df.iterrows():
+        try:
+            # cur_resto[0] is the index / name, cur_resto[1] is the data
+            if cur_resto[1]['phone'] in locu_phones:    # check if I have locu id for this restaurant
+                cur_locu_id = locu_restos[ locu_phones.index(cur_resto[1]['phone']) ]['id']
+                cur_menu = locu_venue_client.get_menus(cur_locu_id)
+            else:
+                cur_locu = locu_venue_client.search(name = cur_resto[0], locality='Seattle', category=['restaurant'], has_menu=True)
+                time.sleep(0.5)
+                if cur_locu['objects'] == []: # can't get a menu for this restaurant
+                    continue
+                new_locu_list.append(cur_locu['objects'][0])
+
+                cur_menu = locu_venue_client.get_menus( cur_locu['objects'][0]['id'] )
+
+            menu_list.append( [cur_resto[0], cur_menu ] )
+            time.sleep(0.5)
+            #if cur_name
+        except:
+            pbd.set_trace()
+            print('Reached rate limit on restaurant: {0}'.format(cur_resto[0]))
+            break
+    return menu_list, new_locu_list

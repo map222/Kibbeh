@@ -33,7 +33,7 @@ def wordify_json_menu(json_menu, stop_words):
                  }
     cur_menu = json_menu
     string_menu = json.dumps(cur_menu)
-    letters_only_menu =re.sub("[^a-zA-Z]", " ", string_menu )
+    letters_only_menu =re.sub("[^a-zA-Z0-9]", " ", string_menu )
     letters_only_menu = letters_only_menu.lower()
     menu_words = letters_only_menu.split() # split into words
     menu_words = [w for w in menu_words if len(w) > 2] # get rid of 1-2 letter words
