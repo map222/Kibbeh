@@ -132,7 +132,8 @@ def get_locu_menus_yelp_id(yelp_df, locu_restos, locu_venue_client):
                 cur_locu_id = locu_restos[ locu_phones.index(cur_resto[1]['phone']) ]['id']
                 cur_menu = locu_venue_client.get_menus(cur_locu_id)
             else:
-                cur_locu = locu_venue_client.search(name = cur_resto[0], locality='Seattle', category=['restaurant'], has_menu=True)
+                cur_locu = locu_venue_client.search(name = cur_resto[0], locality='Seattle',
+                                                    category=['restaurant'], has_menu=True)
                 time.sleep(0.5)
                 if cur_locu['objects'] == []: # can't get a menu for this restaurant
                     continue
