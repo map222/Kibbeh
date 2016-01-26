@@ -1,6 +1,8 @@
 *api_key.txt
 *checkpoint.ipynb
 *__pycache__
+*api*.py
+*.json
 
 # Windows image file caches
 Thumbs.db
