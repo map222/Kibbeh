@@ -25,14 +25,16 @@ def wordify_json_menu(json_menu, stop_words):
     ''' Converts the dictionary representation of a menu to a simple list of words
     
     json_menu: a dictionary / json from foursquare of a restaurant menu
+    stop_words: a set of stop words to be removed
     '''
+    assert type(stop_words) == set, 'stop_words should be a set (set search is O(n) )'
+    
     dumb_keys = {'name', 'count', 'items', 'Main', 'Menu', # yelp
                  'description', 'entries', 'price', 'prices',
                  'section_name', 'subsections', 'currency_symbol',
                  'menu_name', 'type', 'item', 'entryid', 'options' # locu
-                 }
-    cur_menu = json_menu
-    string_menu = json.dumps(cur_menu)
+                 } # these are keys specific to foursquare, yelp, and locu we don't want
+    string_menu = json.dumps(json_menu)
     letters_only_menu =re.sub("[^a-zA-Z]", " ", string_menu )
     letters_only_menu = letters_only_menu.lower()
     menu_words = letters_only_menu.split() # split into words
