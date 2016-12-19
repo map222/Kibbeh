@@ -20,7 +20,7 @@ def remove_duplicate_fs_restos(fs_resto_list):
             new_fs_restos.append(cur_resto)
     return new_fs_restos
 
-def get_fs_top_restos_zip(foursquare_client, zip_list):
+def get_fs_top_restos_zip(foursquare_client, zip_list, section = 'food'):
     ''' Load top 250 restaurants in different price ranges and zip codes
     
     Arguments:
@@ -37,7 +37,7 @@ def get_fs_top_restos_zip(foursquare_client, zip_list):
         print('Download data for {0} zip code.'.format(cur_zip))
         for cur_offset in offset_list:
             for cur_price in price_list:
-                zip_params = {'near': str(cur_zip), 'section': 'food', 
+                zip_params = {'near': str(cur_zip), 'section': section, 
                                      'limit': query_limit, 'offset': cur_offset, 'price': cur_price}
                 cur_query = foursquare_client.venues.explore(params=zip_params)
                 #pdb.set_trace()
@@ -72,9 +72,11 @@ def get_fs_menus(foursquare_client, fs_id_list ):
         time.sleep(0.75)
     return restaurant_menus
     
-def get_fs_restos_by_ll(grid_values, foursquare_client, grid_step = 0.01, grid_radius=250):
+def get_fs_restos_by_ll(grid_values, foursquare_client, grid_step = 0.01, grid_radius=1000, category_id = '4d4b7105d754a06374d81259'):
     ''' get restaurants by latitude and longitude
         most restaurants returned by this do not have ratings
+        grid_radius: 0.01 = 1 km
+        category_id: which category to search; default is "food"
         '''
     restaurant_data = []
     query_limit = 50
@@ -86,12 +88,11 @@ def get_fs_restos_by_ll(grid_values, foursquare_client, grid_step = 0.01, grid_r
     
     for x in x_range:
         for y in y_range:
-            #pdb.set_trace
+            print( 'Querying {}, {}: '.format(x, y) )
             string_ll = str(y) + ',' +str(x)
-            grid_params = {'ll': string_ll, 'categoryId': '4d4b7105d754a06374d81259',
+            grid_params = {'ll': string_ll, 'categoryId': category_id,
                                                       'radius': grid_radius, 'limit': query_limit}
             cur_query = foursquare_client.venues.search(params=grid_params)
-            #pdb.set_trace()
             restaurant_data.extend(cur_query['venues'])
             time.sleep(0.5)
     return restaurant_data
