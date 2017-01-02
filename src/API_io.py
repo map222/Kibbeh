@@ -82,7 +82,6 @@ def get_fs_restos_by_ll(grid_values, foursquare_client, grid_step = 0.01, grid_r
     query_limit = 50
     
     # set up longitude latitude grid
-    grid_step = 0.01
     x_range = np.arange(grid_values[0], grid_values[1], grid_step)
     y_range = np.arange(grid_values[2], grid_values[3], grid_step)
     
